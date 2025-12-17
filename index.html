@@ -6,6 +6,14 @@
     <title>Christmas Lottery</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
+        /* Стили для предотвращения гигантского лого */
+        .footer-link img {
+            width: 24px !important;
+            height: 24px !important;
+            max-width: 24px !important;
+            display: inline-block;
+        }
+
         body {
             background: url('background.png') no-repeat center center fixed;
             background-size: cover;
@@ -36,7 +44,6 @@
         .btn-link { background: #24A1DE; color: white; }
         .btn-check { background: #ffd700; color: black; }
 
-        /* Анимации */
         @keyframes shake {
             0% { transform: rotate(0deg); }
             25% { transform: rotate(5deg); }
@@ -79,21 +86,13 @@
             font-weight: bold; cursor: pointer;
         }
 
-        /* КНОПКА С ИСПРАВЛЕНИЕМ ЛОГОТИПА */
         .footer-link {
             position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
             display: flex; align-items: center; justify-content: center;
             text-decoration: none; color: white; background: rgba(0, 0, 0, 0.7);
             padding: 12px 24px; border-radius: 50px; backdrop-filter: blur(5px);
             z-index: 400; border: 1px solid rgba(255,255,255,0.1);
-            min-width: 200px;
-        }
-
-        .footer-link img { 
-            width: 24px !important; 
-            height: 24px !important; 
-            margin-right: 10px; 
-            flex-shrink: 0; /* Чтобы картинка не сжималась и не растягивалась */
+            min-width: 220px;
         }
 
         .promo-section { margin-top: 30px; width: 85%; max-width: 320px; z-index: 310; padding-bottom: 100px;}
@@ -155,7 +154,7 @@
 </div>
 
 <a href="https://t.me/tokk1o_pass" class="footer-link">
-    <img src="tg_logo.png" alt="TG" width="24" height="24">
+    <img src="tg_logo.png" alt="TG" style="width: 24px !important; height: 24px !important; max-width: 24px !important; min-width: 24px !important; margin-right: 10px; display: inline-block;">
     <span>Купить PASS ROYALE</span>
 </a>
 
@@ -254,5 +253,4 @@
     }
 </script>
 </body>
-    </html>
-    
+</html>
