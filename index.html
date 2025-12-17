@@ -36,7 +36,7 @@
         .btn-link { background: #24A1DE; color: white; }
         .btn-check { background: #ffd700; color: black; }
 
-        /* Анимации открытия */
+        /* Анимации */
         @keyframes shake {
             0% { transform: rotate(0deg); }
             25% { transform: rotate(5deg); }
@@ -55,7 +55,6 @@
 
         #gift-btn { width: 180px; cursor: pointer; filter: drop-shadow(0 0 15px rgba(255,0,0,0.4)); margin-bottom: 20px; }
 
-        /* Экран результата с улучшенной анимацией */
         #result-container {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.92); flex-direction: column; justify-content: center;
@@ -68,38 +67,33 @@
             100% { transform: scale(1) rotate(0deg); opacity: 1; }
         }
 
-        @keyframes glow {
-            0% { box-shadow: 0 0 20px rgba(255,215,0,0.2); }
-            50% { box-shadow: 0 0 50px rgba(255,215,0,0.6); }
-            100% { box-shadow: 0 0 20px rgba(255,215,0,0.2); }
-        }
-
         #prize-img { 
             width: 80%; max-width: 350px; border-radius: 25px; 
             animation: prizeShow 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
             border: 3px solid rgba(255,215,0,0.3);
-            background: radial-gradient(circle, rgba(255,215,0,0.2) 0%, transparent 70%);
         }
 
-        .win-light {
-            position: absolute; width: 100%; height: 100%;
-            background: radial-gradient(circle, rgba(255,215,0,0.15) 0%, transparent 60%);
-            animation: glow 3s infinite; z-index: -1;
-        }
-
-        /* Остальные элементы */
         .prizes-list-btn {
             background: linear-gradient(45deg, #ffd700, #ffae00);
             color: black; border: none; padding: 12px 25px; border-radius: 12px;
-            font-weight: bold; cursor: pointer; box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+            font-weight: bold; cursor: pointer;
         }
 
+        /* КНОПКА С ИСПРАВЛЕНИЕМ ЛОГОТИПА */
         .footer-link {
             position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
-            display: flex; align-items: center; text-decoration: none;
-            color: white; background: rgba(0, 0, 0, 0.7);
+            display: flex; align-items: center; justify-content: center;
+            text-decoration: none; color: white; background: rgba(0, 0, 0, 0.7);
             padding: 12px 24px; border-radius: 50px; backdrop-filter: blur(5px);
             z-index: 400; border: 1px solid rgba(255,255,255,0.1);
+            min-width: 200px;
+        }
+
+        .footer-link img { 
+            width: 24px !important; 
+            height: 24px !important; 
+            margin-right: 10px; 
+            flex-shrink: 0; /* Чтобы картинка не сжималась и не растягивалась */
         }
 
         .promo-section { margin-top: 30px; width: 85%; max-width: 320px; z-index: 310; padding-bottom: 100px;}
@@ -112,7 +106,6 @@
             background: #28a745; color: white; font-weight: bold;
         }
 
-        /* Сетка призов */
         #prizes-modal {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.96); flex-direction: column; justify-content: center;
@@ -120,19 +113,19 @@
         }
         .prizes-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; width: 90%; }
         .prizes-grid img { width: 100%; border-radius: 12px; }
-        .jackpot-item { grid-column: span 2; width: 70% !important; border: 2px solid #ffd700; align-self: center; margin-left: auto; margin-right: auto;}
+        .jackpot-item { grid-column: span 2; width: 70% !important; border: 2px solid #ffd700; align-self: center; margin: 0 auto;}
     </style>
 </head>
 <body>
 
 <div id="sub-screen">
-    <h2 style="margin-bottom: 25px;">Подпишись на канал,<br>чтобы крутить!</h2>
+    <h2>Подпишись на канал,<br>чтобы крутить!</h2>
     <a href="https://t.me/tokk1oTT" class="sub-btn btn-link">1. Перейти в канал</a>
     <button class="sub-btn btn-check" onclick="checkSub()">2. Я подписался</button>
 </div>
 
 <div id="app">
-    <div class="instructions" id="hint" style="font-size: 1.4rem;">Нажми на подарок 3 раза!</div>
+    <div class="instructions" id="hint">Нажми на подарок 3 раза!</div>
     <img src="gift.png" id="gift-btn" alt="Открыть">
     <button class="prizes-list-btn" onclick="openPrizesModal()">Список всех призов</button>
 </div>
@@ -152,18 +145,17 @@
 </div>
 
 <div id="result-container">
-    <div class="win-light"></div>
     <h2 id="win-text" style="color: #ffd700; font-size: 2rem; margin-bottom: 15px;">ПОЗДРАВЛЯЕМ!</h2>
     <img src="" id="prize-img">
     <div class="promo-section">
-        <p style="font-size: 0.9rem; color: #bbb; line-height: 1.4;">Чтобы забрать приз, напиши продавцу.<br>Для еще одной попытки введи код:</p>
+        <p style="font-size: 0.9rem; color: #bbb;">Чтобы забрать приз, напиши продавцу.<br>Для еще одной попытки введи код:</p>
         <input type="text" id="promo-input" class="promo-input" placeholder="ПРОМОКОД">
         <button class="promo-btn" onclick="usePromo()">АКТИВИРОВАТЬ КОД</button>
     </div>
 </div>
 
 <a href="https://t.me/tokk1o_pass" class="footer-link">
-    <img src="tg_logo.png" alt="TG">
+    <img src="tg_logo.png" alt="TG" width="24" height="24">
     <span>Купить PASS ROYALE</span>
 </a>
 
@@ -262,4 +254,5 @@
     }
 </script>
 </body>
-</html>
+    </html>
+    
