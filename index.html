@@ -20,7 +20,6 @@
             text-align: center;
         }
 
-        /* --- СТИЛИ ДЛЯ СНЕГОПАДА --- */
         .snowflake {
             position: fixed;
             top: -10%;
@@ -33,7 +32,6 @@
             0% { transform: translateY(0) rotate(0deg); }
             100% { transform: translateY(110vh) rotate(360deg); }
         }
-        /* --------------------------- */
 
         #app { display: none; width: 100%; position: relative; height: 100vh; flex-direction: column; justify-content: center; align-items: center; }
         
@@ -108,12 +106,6 @@
             animation: pulse 2s infinite;
         }
 
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); box-shadow: 0 0 30px #ffd700; }
-            100% { transform: scale(1); }
-        }
-
         .close-modal {
             margin-top: 20px; background: #fff; color: #000;
             border: none; padding: 10px 25px; border-radius: 10px; font-weight: bold;
@@ -178,42 +170,35 @@
     const tg = window.Telegram.WebApp;
     tg.expand();
 
-    // --- НАСТРОЙКИ СНЕГОПАДА С 4 ВИДАМИ ---
-    const SNOWFLAKE_IMAGES = [
-        'snowflake1.png', 
-        'snowflake2.png', 
-        'snowflake3.png', 
-        'snowflake4.png'
-    ]; 
-    
+    // --- СНЕГОПАД ---
+    const SNOWFLAKE_IMAGES = ['snowflake1.png', 'snowflake2.png', 'snowflake3.png', 'snowflake4.png']; 
     function createSnowflake() {
         const snowflake = document.createElement('img');
-        
-        // Выбираем случайную картинку из списка
-        const randomImg = SNOWFLAKE_IMAGES[Math.floor(Math.random() * SNOWFLAKE_IMAGES.length)];
-        snowflake.src = randomImg;
-        
+        snowflake.src = SNOWFLAKE_IMAGES[Math.floor(Math.random() * SNOWFLAKE_IMAGES.length)];
         snowflake.classList.add('snowflake');
-        
-        // Рандомные параметры для разнообразия
-        const size = Math.random() * 15 + 10 + 'px'; // Размер от 10 до 25 пикселей
+        const size = Math.random() * 15 + 10 + 'px';
         const left = Math.random() * 100 + 'vw';
         const duration = Math.random() * 3 + 4 + 's'; 
         const opacity = Math.random() * 0.6 + 0.3;
-        
         snowflake.style.width = size;
         snowflake.style.left = left;
         snowflake.style.animation = `fall ${duration} linear forwards`;
         snowflake.style.opacity = opacity;
-        
         document.body.appendChild(snowflake);
-        
         setTimeout(() => { snowflake.remove(); }, 7000);
     }
-
-    // Создаем снежинку каждые 250мс (чуть чаще, так как их теперь много видов)
     setInterval(createSnowflake, 250);
-    // --------------------------------------
+
+    // --- ЛОГИКА ПРИЛОЖЕНИЯ ---
+    function openPrizesModal() { 
+        document.getElementById('prizes-modal').style.display = 'flex'; 
+        document.querySelector('.footer-link').style.display = 'none'; // Скрываем футер
+    }
+
+    function closePrizesModal() { 
+        document.getElementById('prizes-modal').style.display = 'none'; 
+        document.querySelector('.footer-link').style.display = 'flex'; // Показываем футер
+    }
 
     const VALID_PROMOS = ["TOKK1O2025", "TOKK1OPASS", "TOKK1ONEWYEAR", "PASS4000"];
     const INFINITE_PROMO = "ELQDAR04";
@@ -238,9 +223,6 @@
         document.getElementById('sub-screen').style.display = 'none';
         document.getElementById('app').style.display = 'flex';
     }
-
-    function openPrizesModal() { document.getElementById('prizes-modal').style.display = 'flex'; }
-    function closePrizesModal() { document.getElementById('prizes-modal').style.display = 'none'; }
 
     let clicks = 0;
     let isOpening = false;
@@ -279,38 +261,22 @@
         document.getElementById('app').style.display = 'none';
         document.getElementById('sub-screen').style.display = 'none';
         document.getElementById('result-container').style.display = 'flex';
+        document.querySelector('.footer-link').style.display = 'flex'; // Убеждаемся, что кнопка видна
         if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
     }
 
     function usePromo() {
         const input = document.getElementById('promo-input').value.trim().toUpperCase();
-        
-        if (input === RESET_PROMO) {
-            localStorage.clear();
-            location.reload();
-            return;
-        }
-
-        if (input === INFINITE_PROMO) {
-            localStorage.removeItem('userPrize');
-            location.reload();
-            return;
-        }
-
+        if (input === RESET_PROMO) { localStorage.clear(); location.reload(); return; }
+        if (input === INFINITE_PROMO) { localStorage.removeItem('userPrize'); location.reload(); return; }
         let usedPromos = JSON.parse(localStorage.getItem('usedPromos') || "[]");
-        if (usedPromos.includes(input)) {
-            tg.showAlert("Этот промокод уже был использован вами!");
-            return;
-        }
-
+        if (usedPromos.includes(input)) { tg.showAlert("Этот промокод уже был использован вами!"); return; }
         if (VALID_PROMOS.includes(input)) {
             usedPromos.push(input);
             localStorage.setItem('usedPromos', JSON.stringify(usedPromos));
             localStorage.removeItem('userPrize');
             location.reload();
-        } else {
-            tg.showAlert("Неверный промокод!");
-        }
+        } else { tg.showAlert("Неверный промокод!"); }
     }
 </script>
 </body>
