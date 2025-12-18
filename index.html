@@ -77,20 +77,10 @@
             100% { transform: scale(2); opacity: 0; }
         }
 
-        /* --- НОВАЯ АНИМАЦИЯ ПУЛЬСАЦИИ ДЛЯ ДЖЕКПОТА --- */
         @keyframes pulse {
-            0% { 
-                transform: scale(1); 
-                box-shadow: 0 0 15px #ffd700; 
-            }
-            50% { 
-                transform: scale(1.05); 
-                box-shadow: 0 0 35px #ffd700, 0 0 50px #ffae00; 
-            }
-            100% { 
-                transform: scale(1); 
-                box-shadow: 0 0 15px #ffd700; 
-            }
+            0% { transform: scale(1); box-shadow: 0 0 15px #ffd700; }
+            50% { transform: scale(1.05); box-shadow: 0 0 35px #ffd700, 0 0 50px #ffae00; }
+            100% { transform: scale(1); box-shadow: 0 0 15px #ffd700; }
         }
 
         .shake { animation: shake 0.2s ease-in-out; }
@@ -114,10 +104,13 @@
         .footer-link img { width: 24px !important; height: 24px !important; margin-right: 10px; flex-shrink: 0; }
         .footer-link span { font-size: 1rem; font-weight: bold; }
 
+        /* --- ИЗМЕНЕННАЯ ПРОЗРАЧНОСТЬ ФОНА (0.7 вместо 0.95) --- */
         #result-container, #prizes-modal {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.95); flex-direction: column; justify-content: center;
+            background: rgba(0,0,0,0.7); /* Теперь фон более прозрачный */
+            flex-direction: column; justify-content: center;
             align-items: center; z-index: 300;
+            backdrop-filter: blur(8px); /* Добавлен эффект размытия для красоты */
         }
 
         #prize-img { width: 85%; max-width: 400px; border-radius: 20px; }
@@ -133,7 +126,7 @@
             justify-self: center; 
             width: 80% !important;
             border: 2px solid #ffd700 !important; 
-            animation: pulse 2s infinite ease-in-out; /* Применяем пульсацию */
+            animation: pulse 2s infinite ease-in-out;
         }
 
         .close-modal {
