@@ -6,10 +6,19 @@
     <title>Christmas Lottery</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
+        /* --- ПОДКЛЮЧЕНИЕ ТВОЕГО ШРИФТА --- */
+        @font-face {
+            font-family: 'MyCustomFont';
+            src: url('myfont.ttf') format('truetype'); /* Замени на свое название и расширение */
+            font-weight: normal;
+            font-style: normal;
+        }
+
         body {
             background: url('background.png') no-repeat center center fixed;
             background-size: cover;
-            font-family: sans-serif;
+            /* ПРИМЕНЕНИЕ ШРИФТА КО ВСЕМУ ТЕКСТУ */
+            font-family: 'MyCustomFont', sans-serif; 
             display: flex;
             justify-content: center;
             align-items: center;
@@ -18,6 +27,11 @@
             overflow: hidden;
             color: white;
             text-align: center;
+        }
+
+        /* Чтобы шрифт применился и к полям ввода, и к кнопкам */
+        input, button, select, textarea {
+            font-family: 'MyCustomFont', sans-serif;
         }
 
         .snowflake {
@@ -189,15 +203,15 @@
     }
     setInterval(createSnowflake, 250);
 
-    // --- ЛОГИКА ПРИЛОЖЕНИЯ ---
+    // --- ЛОГИКА ---
     function openPrizesModal() { 
         document.getElementById('prizes-modal').style.display = 'flex'; 
-        document.querySelector('.footer-link').style.display = 'none'; // Скрываем футер
+        document.querySelector('.footer-link').style.display = 'none'; 
     }
 
     function closePrizesModal() { 
         document.getElementById('prizes-modal').style.display = 'none'; 
-        document.querySelector('.footer-link').style.display = 'flex'; // Показываем футер
+        document.querySelector('.footer-link').style.display = 'flex'; 
     }
 
     const VALID_PROMOS = ["TOKK1O2025", "TOKK1OPASS", "TOKK1ONEWYEAR", "PASS4000"];
@@ -261,7 +275,7 @@
         document.getElementById('app').style.display = 'none';
         document.getElementById('sub-screen').style.display = 'none';
         document.getElementById('result-container').style.display = 'flex';
-        document.querySelector('.footer-link').style.display = 'flex'; // Убеждаемся, что кнопка видна
+        document.querySelector('.footer-link').style.display = 'flex';
         if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
     }
 
