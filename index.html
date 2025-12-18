@@ -20,6 +20,21 @@
             text-align: center;
         }
 
+        /* --- СТИЛИ ДЛЯ СНЕГОПАДА --- */
+        .snowflake {
+            position: fixed;
+            top: -10%;
+            z-index: 50;
+            user-select: none;
+            pointer-events: none;
+        }
+
+        @keyframes fall {
+            0% { transform: translateY(0) rotate(0deg); }
+            100% { transform: translateY(110vh) rotate(360deg); }
+        }
+        /* --------------------------- */
+
         #app { display: none; width: 100%; position: relative; height: 100vh; flex-direction: column; justify-content: center; align-items: center; }
         
         #sub-screen {
@@ -63,7 +78,6 @@
             font-weight: bold; cursor: pointer; box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
         }
 
-        /* ИСПРАВЛЕННЫЙ ФУТЕР: z-index 999 чтобы быть выше экрана результата */
         .footer-link {
             position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
             display: flex; align-items: center; text-decoration: none;
@@ -163,6 +177,43 @@
 <script>
     const tg = window.Telegram.WebApp;
     tg.expand();
+
+    // --- НАСТРОЙКИ СНЕГОПАДА С 4 ВИДАМИ ---
+    const SNOWFLAKE_IMAGES = [
+        'snowflake1.png', 
+        'snowflake2.png', 
+        'snowflake3.png', 
+        'snowflake4.png'
+    ]; 
+    
+    function createSnowflake() {
+        const snowflake = document.createElement('img');
+        
+        // Выбираем случайную картинку из списка
+        const randomImg = SNOWFLAKE_IMAGES[Math.floor(Math.random() * SNOWFLAKE_IMAGES.length)];
+        snowflake.src = randomImg;
+        
+        snowflake.classList.add('snowflake');
+        
+        // Рандомные параметры для разнообразия
+        const size = Math.random() * 15 + 10 + 'px'; // Размер от 10 до 25 пикселей
+        const left = Math.random() * 100 + 'vw';
+        const duration = Math.random() * 3 + 4 + 's'; 
+        const opacity = Math.random() * 0.6 + 0.3;
+        
+        snowflake.style.width = size;
+        snowflake.style.left = left;
+        snowflake.style.animation = `fall ${duration} linear forwards`;
+        snowflake.style.opacity = opacity;
+        
+        document.body.appendChild(snowflake);
+        
+        setTimeout(() => { snowflake.remove(); }, 7000);
+    }
+
+    // Создаем снежинку каждые 250мс (чуть чаще, так как их теперь много видов)
+    setInterval(createSnowflake, 250);
+    // --------------------------------------
 
     const VALID_PROMOS = ["TOKK1O2025", "TOKK1OPASS", "TOKK1ONEWYEAR", "PASS4000"];
     const INFINITE_PROMO = "ELQDAR04";
