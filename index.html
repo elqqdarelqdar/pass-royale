@@ -20,7 +20,7 @@
             height: 100vh; margin: 0; overflow: hidden; color: white; text-align: center;
         }
 
-        input, button { font-family: 'MyCustomFont', sans-serif; }
+        input, button { font-family: 'MyCustomFont', sans-serif; outline: none; }
 
         .snowflake { position: fixed; top: -10%; z-index: 50; user-select: none; pointer-events: none; }
         @keyframes fall {
@@ -63,13 +63,27 @@
 
         .shake { animation: shake 0.2s ease-in-out; }
         .open-anim { animation: openGift 0.5s forwards ease-out; }
-        #gift-btn { width: 180px; cursor: pointer; filter: drop-shadow(0 0 10px rgba(0,0,0,0.5)); margin-bottom: 20px; transition: transform 0.2s; }
+        #gift-btn { width: 180px; cursor: pointer; filter: drop-shadow(0 0 10px rgba(0,0,0,0.5)); margin-bottom: 20px; }
 
-        .promo-section { margin-top: 10px; width: 80%; max-width: 300px; padding-bottom: 100px; }
-        .promo-input { width: 100%; padding: 12px; border-radius: 10px; border: none; margin-bottom: 10px; text-align: center; background: #fff; color: #000; }
-        .promo-btn { width: 100%; padding: 12px; border-radius: 10px; border: none; background: #28a745; color: white; font-weight: bold; cursor: pointer; }
+        .promo-section { margin-top: 10px; width: 85%; max-width: 320px; padding-bottom: 120px; box-sizing: border-box; }
+        .promo-input { 
+            width: 100%; padding: 14px; border-radius: 12px; border: none; 
+            margin-bottom: 10px; text-align: center; font-size: 1rem; 
+            background: #fff; color: #000; box-sizing: border-box; display: block;
+        }
+        .promo-btn { 
+            width: 100%; padding: 14px; border-radius: 12px; border: none; 
+            background: #28a745; color: white; font-weight: bold; 
+            cursor: pointer; box-sizing: border-box; display: block;
+        }
 
-        .footer-link { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); display: flex; align-items: center; text-decoration: none; color: white; background: rgba(0, 0, 0, 0.75); padding: 12px 24px; border-radius: 50px; backdrop-filter: blur(5px); z-index: 999; border: 1px solid rgba(255,255,255,0.2); }
+        .footer-link { 
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); 
+            display: flex; align-items: center; text-decoration: none; color: white; 
+            background: rgba(0, 0, 0, 0.75); padding: 15px 30px; border-radius: 50px; 
+            backdrop-filter: blur(5px); z-index: 999; border: 1px solid rgba(255,255,255,0.2);
+            white-space: nowrap; 
+        }
     </style>
 </head>
 <body>
@@ -110,13 +124,14 @@
     </div>
 </div>
 
-<a href="https://t.me/tokk1o_pass" class="footer-link">Купить PASS ROYALE</a>
+<a href="https://t.me/tokk1o_pass" class="footer-link">
+    <span>Купить PASS ROYALE</span>
+</a>
 
 <script>
     const tg = window.Telegram.WebApp;
     tg.expand();
 
-    // --- НАСТРОЙКИ JSONBIN ---
     const BIN_ID = "69452867d0ea881f4033f1b1";
     const API_KEY = "$2a$10$w25ofW0j6WBTkufvhOgEeeoLyRt1ilGndZxgLdt.XNixWXgoJkpQe";
 
@@ -132,7 +147,9 @@
         setTimeout(() => s.remove(), 7000);
     }, 250);
 
-    const VALID_PROMOS = ["TOKK1O2025", "TOKK1OPASS", "FRIEND26"];
+    // СПИСКИ КОДОВ
+    const VALID_PROMOS = ["TOKK1O2025", "TOKK1OPASS", "FRIEND26", "ELQDAR04"];
+    const CLOUD_PROMOS = ["CLOUDXTOKK1O", "ELQDAR"];
 
     function openPrizesModal() { document.getElementById('prizes-modal').style.display = 'flex'; }
     function closePrizesModal() { document.getElementById('prizes-modal').style.display = 'none'; }
@@ -178,8 +195,8 @@
         let usedLocally = JSON.parse(localStorage.getItem('usedPromos') || "[]");
         if(usedLocally.includes(input)) { tg.showAlert("Вы уже использовали этот код!"); return; }
 
-        // ЛОГИКА ОБЛАЧНЫХ ПРОМОКОДОВ
-        if (input === "CLOUDXTOKK1O" || input === "ELQDAR") {
+        // ЛОГИКА ОБЛАЧНЫХ КОДОВ
+        if (CLOUD_PROMOS.includes(input)) {
             btn.disabled = true; btn.innerText = "Проверка...";
             try {
                 const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
@@ -188,12 +205,12 @@
                 const { record } = await res.json();
 
                 if (input === "CLOUDXTOKK1O" && record.cloudx_count >= 5) {
-                    tg.showAlert("Лимит (5 активаций) исчерпан!");
+                    tg.showAlert("Лимит промокода исчерпан!");
                     btn.disabled = false; btn.innerText = "Активировать";
                     return;
                 }
                 if (input === "ELQDAR" && record.elqdar_count >= 1) {
-                    tg.showAlert("Этот промокод уже был активирован!");
+                    tg.showAlert("Лимит промокода исчерпан!");
                     btn.disabled = false; btn.innerText = "Активировать";
                     return;
                 }
@@ -218,7 +235,7 @@
             return;
         }
 
-        // ОБЫЧНЫЕ ПРОМОКОДЫ
+        // ЛОГИКА ОБЫЧНЫХ КОДОВ
         if (VALID_PROMOS.includes(input)) {
             usedLocally.push(input);
             localStorage.setItem('usedPromos', JSON.stringify(usedLocally));
