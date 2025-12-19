@@ -117,7 +117,6 @@
 <div id="result-container">
     <h2 style="margin-bottom: 10px;">Твой приз!</h2>
     <img src="" id="prize-img">
-    <button class="prizes-list-btn" onclick="openPrizesModal()" style="margin-bottom: 15px;">Список призов</button>
     <div class="promo-section">
         <input type="text" id="promo-input" class="promo-input" placeholder="Введите промокод">
         <button class="promo-btn" id="activate-btn" onclick="usePromo()">Активировать</button>
@@ -148,7 +147,8 @@
     }, 250);
 
     // СПИСКИ КОДОВ
-    const VALID_PROMOS = ["TOKK1O2025", "TOKK1OPASS", "FRIEND26", "ELQDAR04"];
+    const INFINITE_PROMOS = ["ELQDAR04"]; // Бесконечный код
+    const VALID_PROMOS = ["TOKK1O2025", "TOKK1OPASS", "FRIEND26"];
     const CLOUD_PROMOS = ["CLOUDXTOKK1O", "ELQDAR"];
 
     function openPrizesModal() { document.getElementById('prizes-modal').style.display = 'flex'; }
@@ -164,27 +164,32 @@
         } else {
             this.classList.add('open-anim');
             if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('heavy');
-            setTimeout(drawPrize, 500);
+            
+            // Фикс бага: сначала считаем приз, записываем, и только потом меняем экран
+            const win = calculateResult();
+            localStorage.setItem('userPrize', win);
+            document.getElementById('prize-img').src = win;
+            
+            setTimeout(() => {
+                document.getElementById('app').style.display = 'none';
+                document.getElementById('result-container').style.display = 'flex';
+                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+            }, 500);
         }
     };
 
-    function drawPrize() {
+    function calculateResult() {
         const prizes = [
             {img:'5percent.png', c:40}, {img:'10percent.png', c:30}, 
             {img:'15percent.png', c:15}, {img:'20percent.png', c:10}, 
             {img:'30percent.png', c:3.3}, {img:'50percent.png', c:1.5}, {img:'jackpot.png', c:0.2}
         ];
-        let r = Math.random()*100, cur = 0, win = prizes[0].img;
-        for(let p of prizes) { cur += p.c; if(r <= cur) { win = p.img; break; } }
-        localStorage.setItem('userPrize', win);
-        showFinalPrize(win);
-    }
-
-    function showFinalPrize(img) {
-        document.getElementById('prize-img').src = img;
-        document.getElementById('app').style.display = 'none';
-        document.getElementById('result-container').style.display = 'flex';
-        if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+        let r = Math.random()*100, cur = 0;
+        for(let p of prizes) { 
+            cur += p.c; 
+            if(r <= cur) return p.img; 
+        }
+        return prizes[0].img;
     }
 
     async function usePromo() {
@@ -192,10 +197,16 @@
         const btn = document.getElementById('activate-btn');
         if (!input || btn.disabled) return;
 
+        // ЛОГИКА БЕСКОНЕЧНЫХ КОДОВ
+        if (INFINITE_PROMOS.includes(input)) {
+            localStorage.removeItem('userPrize');
+            location.reload();
+            return;
+        }
+
         let usedLocally = JSON.parse(localStorage.getItem('usedPromos') || "[]");
         if(usedLocally.includes(input)) { tg.showAlert("Вы уже использовали этот код!"); return; }
 
-        // ЛОГИКА ОБЛАЧНЫХ КОДОВ
         if (CLOUD_PROMOS.includes(input)) {
             btn.disabled = true; btn.innerText = "Проверка...";
             try {
@@ -235,7 +246,6 @@
             return;
         }
 
-        // ЛОГИКА ОБЫЧНЫХ КОДОВ
         if (VALID_PROMOS.includes(input)) {
             usedLocally.push(input);
             localStorage.setItem('usedPromos', JSON.stringify(usedLocally));
@@ -248,7 +258,11 @@
 
     window.onload = () => {
         const saved = localStorage.getItem('userPrize');
-        if(saved) showFinalPrize(saved);
+        if(saved) {
+            document.getElementById('prize-img').src = saved;
+            document.getElementById('app').style.display = 'none';
+            document.getElementById('result-container').style.display = 'flex';
+        }
     };
 </script>
 </body>
