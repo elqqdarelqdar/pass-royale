@@ -6,45 +6,30 @@
     <title>Christmas Lottery</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        /* --- ПОДКЛЮЧЕНИЕ ШРИФТА --- */
         @font-face {
             font-family: 'MyCustomFont';
             src: url('myfont.ttf') format('truetype');
-            font-weight: normal;
-            font-style: normal;
+            font-weight: normal; font-style: normal;
         }
 
         body {
             background: url('background.png') no-repeat center center fixed;
             background-size: cover;
             font-family: 'MyCustomFont', sans-serif; 
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            overflow: hidden;
-            color: white;
-            text-align: center;
+            display: flex; justify-content: center; align-items: center;
+            height: 100vh; margin: 0; overflow: hidden; color: white; text-align: center;
         }
 
-        input, button, select, textarea {
-            font-family: 'MyCustomFont', sans-serif;
-        }
+        input, button { font-family: 'MyCustomFont', sans-serif; }
 
-        .snowflake {
-            position: fixed;
-            top: -10%;
-            z-index: 50;
-            user-select: none;
-            pointer-events: none;
-        }
-
+        /* Снежинки */
+        .snowflake { position: fixed; top: -10%; z-index: 50; user-select: none; pointer-events: none; }
         @keyframes fall {
             0% { transform: translateY(0) rotate(0deg); }
             100% { transform: translateY(110vh) rotate(360deg); }
         }
 
+        /* Контейнеры */
         #app { display: none; width: 100%; position: relative; height: 100vh; flex-direction: column; justify-content: center; align-items: center; }
         
         #sub-screen {
@@ -53,116 +38,60 @@
             z-index: 100; padding: 20px; box-sizing: border-box;
         }
 
-        .sub-btn {
-            display: block; margin: 10px; padding: 15px 30px; border-radius: 15px;
-            text-decoration: none; font-weight: bold; border: none; cursor: pointer;
-            width: 80%; max-width: 300px;
+        #result-container, #prizes-modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7); flex-direction: column; justify-content: center;
+            align-items: center; z-index: 300; backdrop-filter: blur(8px);
         }
+
+        /* Кнопки */
+        .sub-btn { display: block; margin: 10px; padding: 15px 30px; border-radius: 15px; font-weight: bold; border: none; cursor: pointer; width: 80%; max-width: 300px; text-decoration: none; }
         .btn-link { background: #24A1DE; color: white; }
         .btn-check { background: #ffd700; color: black; }
+        .prizes-list-btn { background: linear-gradient(45deg, #ffd700, #ffae00); color: black; border: none; padding: 10px 20px; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 10px; }
 
-        .instructions { margin-bottom: 20px; font-size: 1.2rem; font-weight: bold; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
-
-        @keyframes shake {
-            0% { transform: rotate(0deg); }
-            25% { transform: rotate(5deg); }
-            50% { transform: rotate(-5deg); }
-            75% { transform: rotate(5deg); }
-            100% { transform: rotate(0deg); }
-        }
-        
-        @keyframes openGift {
-            0% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.4); opacity: 0.8; filter: brightness(1.5); }
-            100% { transform: scale(2); opacity: 0; }
-        }
-
+        /* Анимации */
         @keyframes pulse {
             0% { transform: scale(1); box-shadow: 0 0 15px #ffd700; }
             50% { transform: scale(1.05); box-shadow: 0 0 35px #ffd700, 0 0 50px #ffae00; }
             100% { transform: scale(1); box-shadow: 0 0 15px #ffd700; }
         }
-
         .shake { animation: shake 0.2s ease-in-out; }
+        @keyframes shake { 0%, 100% {transform: rotate(0);} 25% {transform: rotate(5deg);} 75% {transform: rotate(-5deg);} }
         .open-anim { animation: openGift 0.5s forwards ease-out; }
+        @keyframes openGift { 0% {transform: scale(1); opacity:1;} 100% {transform: scale(2); opacity:0;} }
 
-        #gift-btn { width: 180px; cursor: pointer; filter: drop-shadow(0 0 10px rgba(0,0,0,0.5)); margin-bottom: 20px; transition: transform 0.2s; }
-
-        .prizes-list-btn {
-            background: linear-gradient(45deg, #ffd700, #ffae00);
-            color: black; border: none; padding: 10px 20px; border-radius: 10px;
-            font-weight: bold; cursor: pointer; box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
-        }
-
-        .footer-link {
-            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
-            display: flex; align-items: center; text-decoration: none;
-            color: white; background: rgba(0, 0, 0, 0.75);
-            padding: 12px 24px; border-radius: 50px; backdrop-filter: blur(5px);
-            z-index: 999; white-space: nowrap; border: 1px solid rgba(255,255,255,0.2);
-        }
-        .footer-link img { width: 24px !important; height: 24px !important; margin-right: 10px; flex-shrink: 0; }
-        .footer-link span { font-size: 1rem; font-weight: bold; }
-
-        /* --- ИЗМЕНЕННАЯ ПРОЗРАЧНОСТЬ ФОНА (0.7 вместо 0.95) --- */
-        #result-container, #prizes-modal {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.7); /* Теперь фон более прозрачный */
-            flex-direction: column; justify-content: center;
-            align-items: center; z-index: 300;
-            backdrop-filter: blur(8px); /* Добавлен эффект размытия для красоты */
-        }
-
-        #prize-img { width: 85%; max-width: 400px; border-radius: 20px; }
-
-        .prizes-grid {
-            display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;
-            padding: 20px; overflow-y: auto; max-height: 70vh; width: 90%;
-        }
+        /* Призы */
+        .prizes-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; padding: 20px; overflow-y: auto; max-height: 70vh; width: 90%; }
         .prizes-grid img { width: 100%; border-radius: 10px; border: 1px solid #444; }
-        
-        .jackpot-item {
-            grid-column: span 2; 
-            justify-self: center; 
-            width: 80% !important;
-            border: 2px solid #ffd700 !important; 
-            animation: pulse 2s infinite ease-in-out;
-        }
+        .jackpot-item { grid-column: span 2; justify-self: center; width: 80% !important; border: 2px solid #ffd700 !important; animation: pulse 2s infinite ease-in-out; }
+        #prize-img { width: 85%; max-width: 400px; border-radius: 20px; margin-bottom: 15px; }
 
-        .close-modal {
-            margin-top: 20px; background: #fff; color: #000;
-            border: none; padding: 10px 25px; border-radius: 10px; font-weight: bold;
-        }
+        /* Промокод */
+        .promo-section { margin-top: 10px; width: 80%; max-width: 300px; padding-bottom: 100px; }
+        .promo-input { width: 100%; padding: 12px; border-radius: 10px; border: none; margin-bottom: 10px; text-align: center; background: #fff; color: #000; }
+        .promo-btn { width: 100%; padding: 12px; border-radius: 10px; border: none; background: #28a745; color: white; font-weight: bold; }
 
-        .promo-section { margin-top: 20px; width: 80%; max-width: 300px; padding-bottom: 100px; }
-        .promo-input {
-            width: 100%; padding: 12px; border-radius: 10px; border: none;
-            margin-bottom: 10px; text-align: center; font-size: 1rem; box-sizing: border-box;
-            background: #fff; color: #000;
-        }
-        .promo-btn {
-            width: 100%; padding: 12px; border-radius: 10px; border: none;
-            background: #28a745; color: white; font-weight: bold; cursor: pointer;
-        }
+        .footer-link { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); display: flex; align-items: center; text-decoration: none; color: white; background: rgba(0, 0, 0, 0.75); padding: 12px 24px; border-radius: 50px; backdrop-filter: blur(5px); z-index: 999; border: 1px solid rgba(255,255,255,0.2); }
     </style>
 </head>
 <body>
 
 <div id="sub-screen">
-    <h2>Для получения скидки подпишись на канал</h2>
+    <h2>Подпишись на канал для участия</h2>
     <a href="https://t.me/tokk1oTT" class="sub-btn btn-link">1. Перейти в канал</a>
     <button class="sub-btn btn-check" onclick="checkSub()">2. Я подписался</button>
 </div>
 
 <div id="app">
-    <div class="instructions" id="hint">Открой подарок!</div>
-    <img src="gift.png" id="gift-btn" alt="Открыть подарок">
+    <div class="instructions" id="hint">Нажми на подарок 3 раза!</div>
+    <img src="gift.png" id="gift-btn" style="width:180px; cursor:pointer;" alt="Подарок">
     <button class="prizes-list-btn" onclick="openPrizesModal()">Список призов</button>
 </div>
 
 <div id="prizes-modal">
-    <h3 style="color: #ffd700;">Главный приз</h3>
-    <div class="prizes-grid" id="grid-content">
+    <h3 style="color: #ffd700;">Список возможных призов</h3>
+    <div class="prizes-grid">
         <img src="jackpot.png" class="jackpot-item">
         <img src="5percent.png">
         <img src="10percent.png">
@@ -171,21 +100,20 @@
         <img src="30percent.png">
         <img src="50percent.png">
     </div>
-    <button class="close-modal" onclick="closePrizesModal()">Закрыть</button>
+    <button class="prizes-list-btn" style="background:#fff;" onclick="closePrizesModal()">Закрыть</button>
 </div>
 
 <div id="result-container">
-    <h2 id="win-text">Твой приз!</h2>
+    <h2>Твой приз!</h2>
     <img src="" id="prize-img">
-    <div class="promo-section" id="promo-area">
-        <p style="font-size: 0.8rem; color: #ccc;">Напиши продавцу чтобы воспользоваться скидкой. <br>Для повторной прокрутки нужен код!</p>
+    <button class="prizes-list-btn" onclick="openPrizesModal()" style="margin-bottom: 20px;">Посмотреть все призы</button>
+    <div class="promo-section">
         <input type="text" id="promo-input" class="promo-input" placeholder="Введите промокод">
-        <button class="promo-btn" onclick="usePromo()">Активировать</button>
+        <button class="promo-btn" onclick="usePromo()">Активировать код</button>
     </div>
 </div>
 
 <a href="https://t.me/tokk1o_pass" class="footer-link">
-    <img src="tg_logo.png" alt="TG" style="width:24px; height:24px;">
     <span>Купить PASS ROYALE</span>
 </a>
 
@@ -193,114 +121,117 @@
     const tg = window.Telegram.WebApp;
     tg.expand();
 
-    // --- СНЕГОПАД ---
-    const SNOWFLAKE_IMAGES = ['snowflake1.png', 'snowflake2.png', 'snowflake3.png', 'snowflake4.png']; 
-    function createSnowflake() {
-        const snowflake = document.createElement('img');
-        snowflake.src = SNOWFLAKE_IMAGES[Math.floor(Math.random() * SNOWFLAKE_IMAGES.length)];
-        snowflake.classList.add('snowflake');
-        const size = Math.random() * 15 + 10 + 'px';
-        const left = Math.random() * 100 + 'vw';
-        const duration = Math.random() * 3 + 4 + 's'; 
-        const opacity = Math.random() * 0.6 + 0.3;
-        snowflake.style.width = size;
-        snowflake.style.left = left;
-        snowflake.style.animation = `fall ${duration} linear forwards`;
-        snowflake.style.opacity = opacity;
-        document.body.appendChild(snowflake);
-        setTimeout(() => { snowflake.remove(); }, 7000);
-    }
-    setInterval(createSnowflake, 250);
+    // Снег
+    setInterval(() => {
+        const s = document.createElement('img');
+        s.src = 'snowflake' + (Math.floor(Math.random()*4)+1) + '.png';
+        s.className = 'snowflake';
+        s.style.left = Math.random()*100+'vw';
+        s.style.width = Math.random()*15+10+'px';
+        s.style.animation = `fall ${Math.random()*3+4}s linear forwards`;
+        document.body.appendChild(s);
+        setTimeout(() => s.remove(), 7000);
+    }, 250);
 
-    // --- ЛОГИКА ---
-    function openPrizesModal() { 
-        document.getElementById('prizes-modal').style.display = 'flex'; 
-        document.querySelector('.footer-link').style.display = 'none'; 
-    }
-
-    function closePrizesModal() { 
-        document.getElementById('prizes-modal').style.display = 'none'; 
-        document.querySelector('.footer-link').style.display = 'flex'; 
-    }
-
-    const VALID_PROMOS = ["TOKK1O2025", "TOKK1OPASS", "TOKK1ONEWYEAR", "PASS4000", "FRIEND26"];
-    const INFINITE_PROMO = "ELQDAR04";
-    const RESET_PROMO = "RESETALL";
-
-    const prizes = [
-        { img: '5percent.png', chance: 40 },
-        { img: '10percent.png', chance: 30 },
-        { img: '15percent.png', chance: 15 },
-        { img: '20percent.png', chance: 10 },
-        { img: '30percent.png', chance: 3.3 },
-        { img: '50percent.png', chance: 1.5 },
-        { img: 'jackpot.png', chance: 0.2 }
-    ];
-
-    window.onload = () => {
-        const savedPrize = localStorage.getItem('userPrize');
-        if (savedPrize) showFinalPrize(savedPrize);
+    // НАСТРОЙКИ ПРОМОКОДОВ С ЛИМИТАМИ
+    const LIMITED_PROMOS = {
+        "CLOUDXTOKK1O": { limit: 5, key: "cloudx_promo_v1" },
+        "ELQDAR": { limit: 1, key: "elqdar_promo_v1" }
     };
+    
+    // Обычные промокоды (безлимитные или одноразовые для пользователя)
+    const VALID_PROMOS = ["TOKK1O2025", "TOKK1OPASS"];
 
-    function checkSub() {
-        document.getElementById('sub-screen').style.display = 'none';
-        document.getElementById('app').style.display = 'flex';
-    }
+    function openPrizesModal() { document.getElementById('prizes-modal').style.display = 'flex'; }
+    function closePrizesModal() { document.getElementById('prizes-modal').style.display = 'none'; }
+    function checkSub() { document.getElementById('sub-screen').style.display = 'none'; document.getElementById('app').style.display = 'flex'; }
 
     let clicks = 0;
-    let isOpening = false;
-    const btn = document.getElementById('gift-btn');
-    const hint = document.getElementById('hint');
-
-    btn.onclick = () => {
-        if(isOpening) return;
+    document.getElementById('gift-btn').onclick = function() {
         clicks++;
-        if (clicks < 3) {
-            btn.classList.add('shake');
-            setTimeout(() => btn.classList.remove('shake'), 200);
-            hint.innerText = `Осталось до открытия: ${3 - clicks}`;
+        if(clicks < 3) {
+            this.classList.add('shake');
+            setTimeout(() => this.classList.remove('shake'), 200);
         } else {
-            isOpening = true;
-            hint.innerText = "ОТКРЫВАЕМ...";
-            btn.classList.add('open-anim');
-            if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('heavy');
+            this.classList.add('open-anim');
             setTimeout(drawPrize, 500);
         }
     };
 
     function drawPrize() {
-        const random = Math.random() * 100;
-        let current = 0, winImg = '';
-        for (let p of prizes) {
-            current += p.chance;
-            if (random <= current) { winImg = p.img; break; }
-        }
-        localStorage.setItem('userPrize', winImg);
-        showFinalPrize(winImg);
+        const prizes = [
+            {img:'5percent.png', c:40}, {img:'10percent.png', c:30}, 
+            {img:'15percent.png', c:15}, {img:'20percent.png', c:10}, 
+            {img:'30percent.png', c:3.3}, {img:'50percent.png', c:1.5}, {img:'jackpot.png', c:0.2}
+        ];
+        let r = Math.random()*100, cur = 0, win = prizes[0].img;
+        for(let p of prizes) { cur += p.c; if(r <= cur) { win = p.img; break; } }
+        localStorage.setItem('userPrize', win);
+        showFinalPrize(win);
     }
 
-    function showFinalPrize(imgSrc) {
-        document.getElementById('prize-img').src = imgSrc;
+    function showFinalPrize(img) {
+        document.getElementById('prize-img').src = img;
         document.getElementById('app').style.display = 'none';
-        document.getElementById('sub-screen').style.display = 'none';
         document.getElementById('result-container').style.display = 'flex';
-        document.querySelector('.footer-link').style.display = 'flex';
-        if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
     }
 
-    function usePromo() {
+    async function usePromo() {
         const input = document.getElementById('promo-input').value.trim().toUpperCase();
-        if (input === RESET_PROMO) { localStorage.clear(); location.reload(); return; }
-        if (input === INFINITE_PROMO) { localStorage.removeItem('userPrize'); location.reload(); return; }
-        let usedPromos = JSON.parse(localStorage.getItem('usedPromos') || "[]");
-        if (usedPromos.includes(input)) { tg.showAlert("Этот промокод уже был использован вами!"); return; }
+        
+        // 1. Проверка кодов с глобальным лимитом
+        if (LIMITED_PROMOS[input]) {
+            const promo = LIMITED_PROMOS[input];
+            try {
+                // Проверяем, не использовал ли уже этот человек этот код (локально)
+                let usedLocally = JSON.parse(localStorage.getItem('usedPromos') || "[]");
+                if(usedLocally.includes(input)) {
+                    tg.showAlert("Вы уже использовали этот код!");
+                    return;
+                }
+
+                // Проверяем глобальный счетчик
+                const check = await fetch(`https://api.countapi.xyz/get/tokk1o_lottery/${promo.key}`);
+                const data = await check.json();
+                
+                if (data.value >= promo.limit) {
+                    tg.showAlert("Лимит активаций этого кода исчерпан!");
+                    return;
+                }
+                
+                // Фиксируем активацию
+                await fetch(`https://api.countapi.xyz/hit/tokk1o_lottery/${promo.key}`);
+                
+                // Добавляем в локальный список использованных, чтобы нельзя было крутить бесконечно
+                usedLocally.push(input);
+                localStorage.setItem('usedPromos', JSON.stringify(usedLocally));
+                
+                localStorage.removeItem('userPrize');
+                location.reload();
+                return;
+            } catch (e) {
+                tg.showAlert("Ошибка связи с сервером. Попробуйте еще раз.");
+                return;
+            }
+        }
+
+        // 2. Обычные промокоды
         if (VALID_PROMOS.includes(input)) {
-            usedPromos.push(input);
-            localStorage.setItem('usedPromos', JSON.stringify(usedPromos));
+            let used = JSON.parse(localStorage.getItem('usedPromos') || "[]");
+            if(used.includes(input)) { tg.showAlert("Вы уже использовали этот код!"); return; }
+            used.push(input);
+            localStorage.setItem('usedPromos', JSON.stringify(used));
             localStorage.removeItem('userPrize');
             location.reload();
-        } else { tg.showAlert("Неверный промокод!"); }
+        } else {
+            tg.showAlert("Неверный код!");
+        }
     }
+
+    window.onload = () => {
+        const saved = localStorage.getItem('userPrize');
+        if(saved) showFinalPrize(saved);
+    };
 </script>
 </body>
 </html>
