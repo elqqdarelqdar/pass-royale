@@ -149,7 +149,7 @@
     // СПИСКИ КОДОВ
     const INFINITE_PROMOS = ["ELQDAR04"]; // Бесконечный код
     const VALID_PROMOS = ["TOKK1O2025", "TOKK1OPASS", "FRIEND26"];
-    const CLOUD_PROMOS = ["CLOUDXTOKK1O", "ELQDAR"];
+    const CLOUD_PROMOS = ["CLOUDXTOKK1O", "ELQDAR", "TOKK1OTOP"];
 
     function openPrizesModal() { document.getElementById('prizes-modal').style.display = 'flex'; }
     function closePrizesModal() { document.getElementById('prizes-modal').style.display = 'none'; }
@@ -165,7 +165,6 @@
             this.classList.add('open-anim');
             if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('heavy');
             
-            // Фикс бага: сначала считаем приз, записываем, и только потом меняем экран
             const win = calculateResult();
             localStorage.setItem('userPrize', win);
             document.getElementById('prize-img').src = win;
@@ -197,7 +196,6 @@
         const btn = document.getElementById('activate-btn');
         if (!input || btn.disabled) return;
 
-        // ЛОГИКА БЕСКОНЕЧНЫХ КОДОВ
         if (INFINITE_PROMOS.includes(input)) {
             localStorage.removeItem('userPrize');
             location.reload();
@@ -225,9 +223,15 @@
                     btn.disabled = false; btn.innerText = "Активировать";
                     return;
                 }
+                if (input === "TOKK1OTOP" && record.tokk1otop_count >= 100) {
+                    tg.showAlert("Лимит промокода исчерпан!");
+                    btn.disabled = false; btn.innerText = "Активировать";
+                    return;
+                }
 
                 if (input === "CLOUDXTOKK1O") record.cloudx_count++;
-                else record.elqdar_count++;
+                else if (input === "ELQDAR") record.elqdar_count++;
+                else if (input === "TOKK1OTOP") record.tokk1otop_count++;
 
                 await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
                     method: 'PUT',
